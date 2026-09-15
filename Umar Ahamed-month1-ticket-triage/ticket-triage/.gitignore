@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# production
+build/
+dist/
+
+# database (NFR-6 — never commit the SQLite file or anything the PMO typed)
+*.db
+*.db-journal
+prisma/dev.db*
+
+# env
+.env
+.env.*
+!.env.example
+
+# misc
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+coverage/
+*.tsbuildinfo

@@ -1,0 +1,215 @@
+version: 1
+name: ticket-triage
+description: >
+  Agent-executable plan that regenerates the Bistec PMO ticket triage scaffold
+  from the spec artefacts in docs/spec/. Every task names the exact context
+  files the agent may read, so the agent is never guessing at requirements and
+  never loading more than it needs.
+
+goals:
+  - Scaffold a ticket triage dashboard for the Bistec PMO from the PRD, with
+    zero manual code edits.
+  - Keep the API surface 1:1 with FR-1..FR-5 and the Prisma schema 1:1 with
+    PRD section 6.
+  - Land a green GitHub Actions gate (lint, typecheck, test, build) in under
+    180 seconds.
+
+spec:
+  prd: docs/spec/prd.md
+  adrs:
+    - docs/spec/adr-001-framework.md
+    - docs/spec/adr-002-data-layer.md
+    - docs/spec/adr-003-validation.md
+  stories: docs/spec/stories/
+
+conventions:
+  package_manager: pnpm
+  commit_style: conventional
+  # Applied to every task. Repeating these in each prompt wasted ~400 tokens
+  # per task and did not change the output - see the context notes, Pair 3.
+  rules:
+    - No `any` types anywhere, including test files (NFR-3).
+    - Do not invent fields that are not in PRD section 6.
+    - src/server/** must not import from next/* (ADR-001).
+    - Every non-2xx API response uses the ApiErrorSchema envelope (NFR-8).
+    - Never emit an `eslint-disable` comment. If a rule fires, fix the code or
+      change the rule in eslint.config.mjs deliberately - a suppression makes
+      the NFR-3 gate report green over a real defect (context notes, F-1).
+
+tasks:
+  - id: T1
+    story: S-006
+    title: Toolchain and config baseline
+    estimate_min: 20
+    prompt: >
+      Create package.json, tsconfig.json (strict, noUncheckedIndexedAccess,
+      path alias @/* -> src/*), next.config.ts, postcss.config.mjs,
+      eslint.config.mjs (flat config, next/core-web-vitals + typescript,
+      no-explicit-any as error, and no-restricted-imports banning next/* inside
+      src/server), vitest.config.ts (node environment, @/ alias) and
+      .gitignore. Scripts: dev, build, start, lint, typecheck, test, db:migrate,
+      db:seed, db:reset, bench.
+    context: [docs/spec/adr-001-framework.md, docs/spec/stories/S-006-green-ci-gate.md]
+    files:
+      - package.json
+      - tsconfig.json
+      - next.config.ts
+      - postcss.config.mjs
+      - eslint.config.mjs
+      - vitest.config.ts
+      - .gitignore
+    verify: pnpm install && pnpm typecheck
+
+  - id: T2
+    story: S-003
+    title: Prisma schema from PRD section 6
+    estimate_min: 15
+    prompt: >
+      Read section 6 of docs/spec/prd.md only. Generate prisma/schema.prisma for
+      the sqlite provider with the Ticket model containing exactly the ten
+      listed fields and the (status, priority) index. Do not add fields that are
+      not in the table. Do not use enum - the sqlite provider does not support
+      it (ADR-002).
+    context: [docs/spec/prd.md#6-data-model, docs/spec/adr-002-data-layer.md]
+    files: [prisma/schema.prisma]
+    verify: pnpm db:migrate
+
+  - id: T3
+    story: S-003
+    title: Seed data and idempotent seed script
+    estimate_min: 25
+    prompt: >
+      Create prisma/seed/tickets.json with 24 realistic Bistec delivery-blocker
+      tickets across the six squads (Apex, Keyflow, GreenChit, BookSwap, Ledger,
+      Atlas). Coverage must include tickets at P0, P1 and P2, at least four with
+      priority null, at least four with owner null, and at least two with status
+      CLOSED so the status filter is provably working. Then write prisma/seed.ts
+      which upserts on `reference` so a second run does not duplicate (AC-1.5).
+    context: [docs/spec/stories/S-003-seeded-datastore.md, prisma/schema.prisma]
+    files: [prisma/seed/tickets.json, prisma/seed.ts]
+    verify: pnpm db:seed && pnpm db:seed
+
+  - id: T4
+    story: S-002
+    title: Zod contracts and the shared error envelope
+    estimate_min: 25
+    prompt: >
+      Create src/lib/contracts.ts exporting PrioritySchema, StatusSchema,
+      TicketSchema, ListQuerySchema, UpdateTicketSchema (.strict()) and
+      ApiErrorSchema, with all TypeScript types derived by z.infer. Encode the
+      exact rules in FR-5 and AC-3.2/AC-3.3/AC-3.4: owner trims, empty string is
+      a 400, null un-assigns, max length 120.
+    context: [docs/spec/prd.md, docs/spec/adr-003-validation.md, docs/spec/stories/S-002-typed-api-contract.md]
+    files: [src/lib/contracts.ts]
+    verify: pnpm typecheck
+
+  - id: T5
+    story: S-001
+    title: Prisma client, structured logger, and the repository seam
+    estimate_min: 25
+    prompt: >
+      Create src/lib/db.ts (Prisma client singleton, safe under Next dev HMR),
+      src/lib/logger.ts (one structured JSON line per request carrying
+      requestId, method, path, status, durationMs, plus errorName on 5xx - NFR-7)
+      and src/server/repository/ticket-repository.ts defining a TicketRepository
+      interface with a Prisma-backed implementation. The interface exists so
+      route tests can run with no database (ADR-002).
+    context: [docs/spec/adr-002-data-layer.md, prisma/schema.prisma, src/lib/contracts.ts]
+    files:
+      - src/lib/db.ts
+      - src/lib/logger.ts
+      - src/server/repository/ticket-repository.ts
+    verify: pnpm typecheck
+
+  - id: T6
+    story: S-004
+    title: Framework-agnostic route handlers
+    estimate_min: 30
+    prompt: >
+      Create src/server/routes/tickets.ts exporting listTickets(request, deps)
+      and updateTicket(request, id, deps), taking a Web Request and returning a
+      Web Response. Implement every acceptance criterion in FR-1, FR-2, FR-3 and
+      FR-5, including INVALID_QUERY, INVALID_JSON, EMPTY_PATCH and
+      TICKET_NOT_FOUND. Must not import from next/*.
+    context: [docs/spec/prd.md, src/lib/contracts.ts, src/server/repository/ticket-repository.ts]
+    files: [src/server/routes/tickets.ts]
+    verify: pnpm typecheck
+
+  - id: T7
+    story: S-005
+    title: Pure grouping function
+    estimate_min: 15
+    prompt: >
+      Create src/lib/grouping.ts with groupByPriority(tickets) returning exactly
+      four groups in the order P0, P1, P2, Untriaged, each with a count, empty
+      groups included, tickets ordered by createdAt ascending. Pure function, no
+      imports beyond the contracts types.
+    context: [docs/spec/stories/S-005-grouped-dashboard.md, src/lib/contracts.ts]
+    files: [src/lib/grouping.ts]
+    verify: pnpm typecheck
+
+  - id: T8
+    story: S-005
+    title: Dashboard page, ticket row editor, and the Next route adapters
+    estimate_min: 30
+    prompt: >
+      Create src/app/layout.tsx, src/app/globals.css (Tailwind v4),
+      src/app/page.tsx (redirect to /tickets), src/app/tickets/page.tsx (server
+      component, force-dynamic, calls the repository directly - never an HTTP
+      self-fetch, per ADR-001), src/app/tickets/ticket-row.tsx (client component
+      for the priority and owner editors) and the two adapters
+      src/app/api/tickets/route.ts and src/app/api/tickets/[id]/route.ts which
+      only delegate to src/server/routes/tickets.ts.
+    context: [docs/spec/stories/S-005-grouped-dashboard.md, src/lib/grouping.ts, src/server/routes/tickets.ts]
+    files:
+      - src/app/layout.tsx
+      - src/app/globals.css
+      - src/app/page.tsx
+      - src/app/tickets/page.tsx
+      - src/app/tickets/ticket-row.tsx
+      - src/app/api/tickets/route.ts
+      - src/app/api/tickets/[id]/route.ts
+    verify: pnpm build
+
+  - id: T9
+    story: S-006
+    title: Vitest suite against the acceptance criteria
+    estimate_min: 30
+    prompt: >
+      Create tests/fake-repository.ts (in-memory TicketRepository),
+      tests/contracts.test.ts, tests/grouping.test.ts, tests/logger.test.ts and
+      tests/routes.tickets.test.ts. Every test name must cite the AC id it
+      covers. No database access and no `any`, including in the tests.
+    context: [docs/spec/prd.md, src/server/routes/tickets.ts, src/lib/grouping.ts]
+    files:
+      - tests/fake-repository.ts
+      - tests/contracts.test.ts
+      - tests/grouping.test.ts
+      - tests/logger.test.ts
+      - tests/routes.tickets.test.ts
+    verify: pnpm test
+
+  - id: T10
+    story: S-006
+    title: CI workflow, benchmark script and README
+    estimate_min: 25
+    prompt: >
+      Create .github/workflows/ci.yml running lint, typecheck, test and build on
+      pull_request and pushes to main, caching both the pnpm store and
+      .next/cache, and running prisma generate before typecheck. Create
+      scripts/bench.mjs measuring p95 for GET /api/tickets and PATCH
+      /api/tickets/:id over 200 requests (NFR-2). Create README.md explaining
+      setup, the architecture seams, and single-command regeneration.
+    context: [docs/spec/stories/S-006-green-ci-gate.md, docs/spec/adr-001-framework.md, package.json]
+    files: [.github/workflows/ci.yml, scripts/bench.mjs, README.md]
+    verify: pnpm lint && pnpm typecheck && pnpm test && pnpm build
+
+traceability:
+  FR-1: [T2, T3, T5, T6]
+  FR-2: [T4, T6, T8]
+  FR-3: [T4, T6, T8]
+  FR-4: [T7, T8]
+  FR-5: [T4, T6]
+  NFR-3: [T1, T9]
+  NFR-4: [T10]
+  NFR-7: [T5, T9]

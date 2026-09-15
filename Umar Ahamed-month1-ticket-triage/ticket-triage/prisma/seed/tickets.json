@@ -1,0 +1,242 @@
+[
+  {
+    "reference": "PMO-1031",
+    "title": "Apex production deploy blocked — release approver on leave",
+    "description": "The Friday release needs a named approver in the change board. Both approvers are on leave until 2026-09-02 and there is no delegate configured.",
+    "squad": "Apex",
+    "status": "OPEN",
+    "priority": "P0",
+    "owner": "Nadeesha Perera",
+    "createdAt": "2026-08-11T03:12:00.000Z"
+  },
+  {
+    "reference": "PMO-1032",
+    "title": "Keyflow client sign-off overdue by 9 days on Sprint 14 scope",
+    "description": "Scope document sent 2026-08-02, no response. Squad is building against an unapproved scope and will need rework if it changes.",
+    "squad": "Keyflow",
+    "status": "OPEN",
+    "priority": "P0",
+    "owner": "Ravi Kumarasinghe",
+    "createdAt": "2026-08-11T05:40:00.000Z"
+  },
+  {
+    "reference": "PMO-1033",
+    "title": "GreenChit staging environment has been down for 3 days",
+    "description": "Infra ticket INF-882 raised 2026-08-09, still unassigned. QA cannot regression test the receipts flow.",
+    "squad": "GreenChit",
+    "status": "OPEN",
+    "priority": "P0",
+    "owner": null,
+    "createdAt": "2026-08-12T02:05:00.000Z"
+  },
+  {
+    "reference": "PMO-1034",
+    "title": "Ledger squad has no assigned BA since 2026-08-01",
+    "description": "Requirements are being written by the tech lead. Two stories were rejected in UAT for missing acceptance criteria.",
+    "squad": "Ledger",
+    "status": "OPEN",
+    "priority": "P1",
+    "owner": "Dilani Fernando",
+    "createdAt": "2026-08-12T04:22:00.000Z"
+  },
+  {
+    "reference": "PMO-1035",
+    "title": "BookSwap penetration test findings not triaged",
+    "description": "ZAP baseline returned 4 medium findings on 2026-08-07. No owner assigned, no remediation dates agreed.",
+    "squad": "BookSwap",
+    "status": "OPEN",
+    "priority": "P1",
+    "owner": "Sanjay Weerasekara",
+    "createdAt": "2026-08-12T06:50:00.000Z"
+  },
+  {
+    "reference": "PMO-1036",
+    "title": "Atlas onboarding — 2 of 5 engineers still without repo access",
+    "description": "Access requests raised 2026-08-05 in the IT portal. Both engineers are idle on setup tasks.",
+    "squad": "Atlas",
+    "status": "OPEN",
+    "priority": "P1",
+    "owner": null,
+    "createdAt": "2026-08-13T03:00:00.000Z"
+  },
+  {
+    "reference": "PMO-1037",
+    "title": "Apex API contract drifted from the published OpenAPI spec",
+    "description": "Client integration team reported 3 endpoints returning fields not in the contract. Needs a spec review before the next client demo.",
+    "squad": "Apex",
+    "status": "OPEN",
+    "priority": "P1",
+    "owner": "Umar Ahamed",
+    "createdAt": "2026-08-13T07:15:00.000Z"
+  },
+  {
+    "reference": "PMO-1038",
+    "title": "Keyflow CI pipeline averaging 14 minutes per run",
+    "description": "No dependency caching configured. Squad reports it is the main reason PRs sit unmerged overnight.",
+    "squad": "Keyflow",
+    "status": "OPEN",
+    "priority": "P2",
+    "owner": "Ravi Kumarasinghe",
+    "createdAt": "2026-08-14T02:30:00.000Z"
+  },
+  {
+    "reference": "PMO-1039",
+    "title": "GreenChit ADR-0003 database choice never ratified",
+    "description": "Draft ADR from 2026-07-28 is still in Proposed. Two squads have already built against the assumed decision.",
+    "squad": "GreenChit",
+    "status": "OPEN",
+    "priority": "P2",
+    "owner": "Thilini Jayawardena",
+    "createdAt": "2026-08-14T04:45:00.000Z"
+  },
+  {
+    "reference": "PMO-1040",
+    "title": "Ledger sprint demo recordings not archived",
+    "description": "Client asked for the Sprint 12 recording; nobody kept it. Needs a storage location and a retention rule.",
+    "squad": "Ledger",
+    "status": "OPEN",
+    "priority": "P2",
+    "owner": null,
+    "createdAt": "2026-08-14T08:10:00.000Z"
+  },
+  {
+    "reference": "PMO-1041",
+    "title": "BookSwap test data refresh script fails on Windows",
+    "description": "Two new joiners cannot seed a local database. Workaround is a manual SQL dump shared over Teams.",
+    "squad": "BookSwap",
+    "status": "OPEN",
+    "priority": "P2",
+    "owner": "Sanjay Weerasekara",
+    "createdAt": "2026-08-17T02:55:00.000Z"
+  },
+  {
+    "reference": "PMO-1042",
+    "title": "Atlas client invoicing blocked on missing timesheet approvals",
+    "description": "11 timesheets unapproved for the 2026-07 billing period. Finance escalated on 2026-08-17.",
+    "squad": "Atlas",
+    "status": "OPEN",
+    "priority": null,
+    "owner": "Nadeesha Perera",
+    "createdAt": "2026-08-17T05:20:00.000Z"
+  },
+  {
+    "reference": "PMO-1043",
+    "title": "Apex squad reporting duplicate stand-up meetings",
+    "description": "Client and internal stand-ups overlap; engineers attend both and lose 45 minutes daily.",
+    "squad": "Apex",
+    "status": "OPEN",
+    "priority": null,
+    "owner": null,
+    "createdAt": "2026-08-18T03:35:00.000Z"
+  },
+  {
+    "reference": "PMO-1044",
+    "title": "Keyflow dependency on an unmaintained PDF library",
+    "description": "Library last published 2023. No CVE yet, but no upgrade path either. Needs an owner and a decision.",
+    "squad": "Keyflow",
+    "status": "OPEN",
+    "priority": null,
+    "owner": null,
+    "createdAt": "2026-08-18T06:00:00.000Z"
+  },
+  {
+    "reference": "PMO-1045",
+    "title": "GreenChit receipt OCR accuracy below the agreed 92% threshold",
+    "description": "Measured 87.4% on the August sample. Client SLA references 92%. Needs a remediation plan before the next review.",
+    "squad": "GreenChit",
+    "status": "OPEN",
+    "priority": null,
+    "owner": "Thilini Jayawardena",
+    "createdAt": "2026-08-19T02:40:00.000Z"
+  },
+  {
+    "reference": "PMO-1046",
+    "title": "Ledger squad has no on-call rotation defined",
+    "description": "Production went live 2026-08-04. Incidents are currently routed to whoever answers in the Teams channel.",
+    "squad": "Ledger",
+    "status": "OPEN",
+    "priority": null,
+    "owner": null,
+    "createdAt": "2026-08-19T07:05:00.000Z"
+  },
+  {
+    "reference": "PMO-1047",
+    "title": "BookSwap UAT environment shares a database with staging",
+    "description": "UAT testers overwrite staging fixtures. Reported twice; no infra ticket raised yet.",
+    "squad": "BookSwap",
+    "status": "OPEN",
+    "priority": "P1",
+    "owner": "Dilani Fernando",
+    "createdAt": "2026-08-20T03:25:00.000Z"
+  },
+  {
+    "reference": "PMO-1048",
+    "title": "Atlas architecture review scheduled but no reviewer assigned",
+    "description": "Review booked for 2026-08-26. No principal engineer confirmed; risk of a second reschedule.",
+    "squad": "Atlas",
+    "status": "OPEN",
+    "priority": "P2",
+    "owner": "Umar Ahamed",
+    "createdAt": "2026-08-20T06:15:00.000Z"
+  },
+  {
+    "reference": "PMO-1049",
+    "title": "Apex client raised 3 defects in production within one week",
+    "description": "All three traced to the same unvalidated input path. Needs a root-cause write-up for the steering committee.",
+    "squad": "Apex",
+    "status": "OPEN",
+    "priority": "P0",
+    "owner": "Ravi Kumarasinghe",
+    "createdAt": "2026-08-24T02:10:00.000Z"
+  },
+  {
+    "reference": "PMO-1050",
+    "title": "Keyflow squad capacity drops 40% from 2026-09-01",
+    "description": "Two engineers rotate to Atlas. Sprint 16 commitment was made at the old capacity and has not been re-baselined.",
+    "squad": "Keyflow",
+    "status": "OPEN",
+    "priority": "P1",
+    "owner": "Nadeesha Perera",
+    "createdAt": "2026-08-25T04:50:00.000Z"
+  },
+  {
+    "reference": "PMO-1051",
+    "title": "GreenChit change request CR-014 has no cost estimate",
+    "description": "Client expects a number by 2026-09-01. Estimate needs the tech lead, who is booked until 2026-08-29.",
+    "squad": "GreenChit",
+    "status": "TRIAGED",
+    "priority": "P1",
+    "owner": "Thilini Jayawardena",
+    "createdAt": "2026-08-25T08:30:00.000Z"
+  },
+  {
+    "reference": "PMO-1052",
+    "title": "Ledger data migration dry run not yet scheduled",
+    "description": "Cutover is 2026-09-14. A dry run needs 5 working days of lead time and has not been booked.",
+    "squad": "Ledger",
+    "status": "TRIAGED",
+    "priority": "P0",
+    "owner": "Sanjay Weerasekara",
+    "createdAt": "2026-08-26T03:05:00.000Z"
+  },
+  {
+    "reference": "PMO-1053",
+    "title": "BookSwap accessibility audit findings closed out",
+    "description": "All 6 findings remediated and re-tested on 2026-08-21. Closed at the delivery review.",
+    "squad": "BookSwap",
+    "status": "CLOSED",
+    "priority": "P2",
+    "owner": "Dilani Fernando",
+    "createdAt": "2026-08-04T04:00:00.000Z"
+  },
+  {
+    "reference": "PMO-1054",
+    "title": "Atlas repository created and pipeline bootstrapped",
+    "description": "Repo, branch protection and CI template in place as of 2026-08-08. No further PMO action.",
+    "squad": "Atlas",
+    "status": "CLOSED",
+    "priority": "P2",
+    "owner": "Umar Ahamed",
+    "createdAt": "2026-08-05T06:20:00.000Z"
+  }
+]

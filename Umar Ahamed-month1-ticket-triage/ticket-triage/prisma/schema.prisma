@@ -1,0 +1,37 @@
+// Generated from docs/spec/prd.md § 6 "Data Model".
+// The field list below is the PRD table verbatim — do not add fields that the
+// PRD does not name (speckit T2).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// A delivery-blocker ticket raised to the Bistec PMO.
+///
+/// `status` and `priority` are String rather than enum because the Prisma
+/// SQLite provider does not support enums (ADR-002). Allowed values are
+/// enforced at the HTTP boundary by StatusSchema / PrioritySchema in
+/// src/lib/contracts.ts, which also produce the TypeScript union types.
+model Ticket {
+  id          String   @id @default(cuid())
+  reference   String   @unique
+  title       String
+  description String
+  squad       String
+  /// OPEN | TRIAGED | CLOSED
+  status      String   @default("OPEN")
+  /// P0 | P1 | P2 — null means untriaged (the FR-4 "Untriaged" group)
+  priority    String?
+  /// Display name of the owner — null means unowned
+  owner       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Every dashboard read filters on status and groups on priority (PRD § 6).
+  @@index([status, priority])
+}
